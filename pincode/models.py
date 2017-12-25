@@ -7,7 +7,7 @@ import uuid
 # Create your models here.
 
 
-class Pincode(models.Model):
+class Pincodes(models.Model):
     """Records Guest details"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     pincode = models.CharField(max_length=128)
