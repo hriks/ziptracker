@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from pincode.models import Pincodes
+from pincode.models import Pincode
 
 import json
 
@@ -29,15 +29,15 @@ class GetPincodeObject(object):
     def getPincodeDetails(self):
         if self.pincode:
             try:
-                pincode = Pincodes.objects.get(pincode=self.pincode)
-            except Pincodes.DoesNotExist:
+                pincode = Pincode.objects.get(pincode=self.pincode)
+            except Pincode.DoesNotExist:
                 return {'Error': str(self.pincode) + " NOT FOUND!"}
             self.city = pincode.getCity()
             self.distict = pincode.getDistict()
             self.state = pincode.getDistict()
         return self
 
-    def __init__(self, request):
+    def __init__(self, request, *args, **kwargs):
         self.pincode = request.POST.get('pincode', '')
         self.city = request.POST.get('city', None)
         self.state = request.POST.get('state', None)
@@ -67,7 +67,7 @@ def ziptracker(request):
 
 
 def update(filename):
-    from pincode.models import Pincodes
+    from pincode.models import Pincode
     import csv
     input_file = csv.DictReader(open(filename))
     data = []
@@ -76,7 +76,7 @@ def update(filename):
     counter = 0
     updated = 0
     for row in data:
-        pincode, created = Pincodes.objects.get_or_create(
+        pincode, created = Pincode.objects.get_or_create(
             pincode=row['pincode'])
         fields = [
             ('state', row['statename']),
