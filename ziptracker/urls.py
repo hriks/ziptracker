@@ -6,6 +6,6 @@ from pincode import views
 
 urlpatterns = [
     url(r'^ziptracker', views.ziptracker, name='ziptracker'),
-    url(r'^hriks/', admin.site.urls),
+    url(r'^admin/', admin.site.urls),
 ] + static(
     MEDIA_URL, document_root=MEDIA_ROOT)
