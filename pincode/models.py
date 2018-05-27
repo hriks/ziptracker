@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from pincode.exceptions import PincodeExistsException
 from django.db import models
 import uuid
 
@@ -9,11 +10,18 @@ import uuid
 
 class Pincode(models.Model):
     """Records Guest details"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    pincode = models.CharField(max_length=128)
-    state = models.CharField(max_length=128, blank=True)
-    distict = models.CharField(max_length=128, blank=True)
-    city = models.CharField(max_length=128, blank=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False)
+    pincode = models.CharField(primary_key=True, max_length=128)
+    state = models.CharField(max_length=128)
+    distict = models.CharField(max_length=128)
+    city = models.CharField(max_length=128)
+    post_office_branch = models.CharField(max_length=128)
+
+    def save(self, *args, **kwargs):
+        pincodes = Pincode.objects.filter(pincode=self.pincode)
+        if pincodes.exists():
+            raise PincodeExistsException("Pincode Already Exists : %s" % self.pincode)
+        super(Pincode, self).save(*args, **kwargs)
 
     def getCity(self):
         return self.city
@@ -24,15 +32,21 @@ class Pincode(models.Model):
     def getState(self):
         return self.state
 
+    def branch(self):
+        return self.post_office_branch
+
+
 class APIRequest(models.Model):
+    """ Stores the API details for every pincode Query
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     pincode = models.ForeignKey('Pincode', null=True, blank=True)
-    query = models.CharField(max_length=32)
-    ip = models.CharField(max_length=16)
-    request = models.TextField()
-    method = models.CharField(max_length=8)
-    is_ajax = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
+    is_ajax = models.BooleanField(default=False)
+    ip_address = models.CharField(max_length=16)
+    query = models.CharField(max_length=32)
+    method = models.CharField(max_length=8)
+    request = models.TextField()
 
     def save(self, *args, **kwargs):
         try:
@@ -43,5 +57,11 @@ class APIRequest(models.Model):
         super(APIRequest, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s: %s | %s" % (self.ip, self.request, self.created)
-        
+        return "%s: %s | %s" % (self.ip_address, self.request, self.created)
+
+    @classmethod
+    def entry(cls, *args, **kwargs):
+        return cls.objects.create(*args, **kwargs)
+
+    def getIPAddress(self, request):
+        return

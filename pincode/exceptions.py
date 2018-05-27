@@ -1,0 +1,2 @@
+class PincodeExistsException(Exception):
+    pass
