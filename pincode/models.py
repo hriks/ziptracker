@@ -15,12 +15,14 @@ class Pincode(models.Model):
     state = models.CharField(max_length=128)
     distict = models.CharField(max_length=128)
     city = models.CharField(max_length=128)
-    post_office_branch = models.CharField(max_length=128)
+    post_office = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
         pincodes = Pincode.objects.filter(pincode=self.pincode)
         if pincodes.exists():
-            raise PincodeExistsException("Pincode Already Exists : %s" % self.pincode)
+            raise PincodeExistsException(
+                "Cannot chanage pincode that already Exists : %s" % self.pincode
+            )
         super(Pincode, self).save(*args, **kwargs)
 
     def getCity(self):
@@ -32,7 +34,7 @@ class Pincode(models.Model):
     def getState(self):
         return self.state
 
-    def branch(self):
+    def getBranch(self):
         return self.post_office_branch
 
 

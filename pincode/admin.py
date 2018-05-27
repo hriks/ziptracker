@@ -15,13 +15,14 @@ class PincodeAdmin(admin.ModelAdmin):
     # TODOS: Put some actions syntax: ['download']
     # Then define a sub function for the that field.
 
+
 @admin.register(APIRequest)
 class APIRequestAdmin(admin.ModelAdmin):
-	"""docstring for APIRequestAdmin"""
-	list_display = ('ip', 'pincode', 'query', 'created')
-	search_fields = ('ip', 'pincode')
-	raw_id_fields = ('pincode',)
-		
+    """docstring for APIRequestAdmin"""
+    list_display = ('ip_address', 'pincode', 'query', 'created')
+    search_fields = ('ip_address', 'pincode')
+    raw_id_fields = ('pincode',)
+
 
 # This is used to register the function on
 # Admin panel.
